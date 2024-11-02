@@ -5,6 +5,8 @@ const http = require('http');
 const express = require('express');
 const { htmlToText } = require('html-to-text');
 const app = express();
+const { Server } = require('socket.io'); // Add this import
+
 const server = http.createServer(app); // Create the server
 
 const nodemailer = require('nodemailer');
