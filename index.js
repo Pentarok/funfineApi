@@ -3,7 +3,7 @@ require('dotenv').config();
 const express = require('express');
 const { htmlToText } = require('html-to-text');
 const app = express();
-
+const server = http.createServer(app); // Create the server
 const io = new Server(server, {
   cors: {
     origin: "https://funfine.vercel.app", // Replace with your actual frontend URL
