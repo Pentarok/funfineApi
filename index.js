@@ -35,7 +35,7 @@ const TipsModel = require('./models/CreateTips');
 
 const FrontEndEndpoint=process.env.FRONT_END_URL;
 app.use(express.json());
-
+app.use(express.urlencoded({ extended: true }));
 
 // Configure CORS options
 const corsOptions = {
