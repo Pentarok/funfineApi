@@ -32,10 +32,10 @@ const NewsModel = require('./models/CreateNews');
 const EventModel = require('./models/CreateEvent.');
 const TipsModel = require('./models/CreateTips');
 
-
+const FrontEndEnpoint=process.env.FRONT_END_URL;
 app.use(express.json());
 app.use(cors({
-  origin: 'http://localhost:5173',
+  origin:FrontEndEnpoint,
   methods: ["GET", "POST", "PUT", "DELETE"],
   credentials: true
 }));
