@@ -5,6 +5,7 @@ const UserSchema = new mongoose.Schema({
     email:String,
     password:String,
     suspensionReason:String,
+    profilePhoto:String,
     isSuspended: { type: Boolean, default: false }, // New field
     role:{
         type:String,
