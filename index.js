@@ -360,9 +360,8 @@ app.post('/posts', uploadToCloudinary, authenticateToken, (req, res) => {
       console.log("Post created successfully:", post._id);
 
     
-      // Notify all clients about the new post using Socket.IO
-      io.emit('postCreated', post);  // Broadcast the event to all connected clients
-
+     
+   
 
       res.status(201).json({ status: 'Ok', post });
     })
@@ -402,8 +401,7 @@ app.delete('/post/:id', async (req, res) => {
     await PostModel.findByIdAndDelete(req.params.id);
     console.log(`Post ${req.params.id} deleted successfully`);
 
-    // Notify all clients about the deleted post
-    io.emit('postDeleted', { id: req.params.id });  
+   
 
     res.json({ status: 'Ok', message: 'Post and associated file deleted successfully' });
   } catch (err) {
@@ -416,7 +414,7 @@ app.delete('/post/:id', async (req, res) => {
 app.get('/upcoming/events',async(req,res)=>{
 updateIsPastStatus();
 try {
-  const upcomingEvents = await PostModel.find({isPast:false,pastRender:true});
+  const upcomingEvents = await PostModel.find({isPast:false,postRender:true});
   if(upcomingEvents){
     res.json(upcomingEvents)
   }else{
@@ -454,9 +452,9 @@ app.post('/toggleEventsView/:postId',async(req,res)=>{
   try {
     const { postId }=req.params;
     const post = await PostModel.findById(postId);
-    const postRender= post.pastRender;
+    const postRender= post.postRender;
     //update post
-    post.pastRender = !postRender;
+    post.postRender = !postRender;
     const updatedPost= await post.save();
     res.json(updatedPost)
   } catch (error) {
@@ -596,10 +594,6 @@ app.put('/post/update/:id', uploadToCloudinary, async (req, res) => {
       return res.status(500).json({ error: 'Failed to update post' });
     }
 
-    // Successfully updated
-    io.emit('postUpdated', { id: req.params.id });  
-    res.json(updatedDoc);
-
   } catch (error) {
     console.error('Error updating post:', error.message);
     res.status(500).json({ error: error.message });
@@ -608,7 +602,7 @@ app.put('/post/update/:id', uploadToCloudinary, async (req, res) => {
 
 app.get('/posts/updated/events',async(req,res)=>{
   try {
-    const updatedPastEvents = await PostModel.find({pastRender:true});
+    const updatedPastEvents = await PostModel.find({postRender:true});
   res.json(updatedPastEvents)
   } catch (error) {
     res.json(error)
@@ -663,7 +657,7 @@ let coverPhoto;
     }
 
     // Successfully updated
-    io.emit('postUpdated', { id: req.params.id });  
+  
     res.json(updatedDoc);
 
   } catch (error) {
@@ -858,8 +852,7 @@ app.delete('/news/:id', async (req, res) => {
     await NewsModel.findByIdAndDelete(req.params.id);
     console.log(`Post ${req.params.id} deleted successfully`);
 
-    // Notify all clients about the deleted post
-    io.emit('postDeleted', { id: req.params.id });  //Broadcast
+
 
     res.json({ status: 'Ok', message: 'Post and associated file deleted successfully' });
   } catch (err) {
@@ -944,7 +937,7 @@ app.put('/news/update/:id', uploadToCloudinary, async (req, res) => {
 
     // Successfully updated
     res.json(updatedDoc);
-    io.emit('postUpdated', { id: req.params.id });  //
+    
 
   } catch (error) {
     console.error('Error updating post:', error.message);
@@ -992,8 +985,6 @@ app.post('/events', uploadToCloudinary, authenticateToken, (req, res) => {
   })
     .then((post) => {
       console.log("Post created successfully:", post._id);
- // Notify all clients about the new post using Socket.IO
- io.emit('postCreated', post);  // Broadcast the event to all connected clients
 
       res.status(201).json({ status: 'Ok', post });
     })
@@ -1031,9 +1022,6 @@ app.delete('/event/:id', async (req, res) => {
     await EventModel.findByIdAndDelete(req.params.id);
     console.log(`Post ${req.params.id} deleted successfully`);
 
-  
-    // Notify all clients about the deleted post using Socket.IO
-    io.emit('postDeleted', { id: req.params.id });  // Broadcast the event to all connected clients
 
     res.json({ status: 'Ok', message: 'Post and associated file deleted successfully' });
   } catch (err) {
@@ -1116,10 +1104,7 @@ app.put('/event/update/:id', uploadToCloudinary, async (req, res) => {
       return res.status(500).json({ error: 'Failed to update post' });
     }
 
-    // Successfully updated
 
-    // Notify all clients about the deleted post using Socket.IO
-    io.emit('postUpdated', { id: req.params.id });  // Broadcast the event to all connected clients
 
     res.json(updatedDoc);
 
@@ -1187,9 +1172,7 @@ app.post('/tips', uploadToCloudinary, authenticateToken, (req, res) => {
       console.log("Post created successfully:", post._id);
 
     
-      // Notify all clients about the new post using Socket.IO
-      io.emit('postCreated', post);  // Broadcast the event to all connected clients
-
+ 
       res.status(201).json({ status: 'Ok', post });
     })
     .catch((err) => {
@@ -1226,10 +1209,6 @@ app.delete('/tip/:id', async (req, res) => {
     await TipsModel.findByIdAndDelete(req.params.id);
     console.log(`Post ${req.params.id} deleted successfully`);
 
-
-
-    // Notify all clients about the deleted post using Socket.IO
-    io.emit('postDeleted', { id: req.params.id });  // Broadcast the event to all connected clients
 
 
     res.json({ status: 'Ok', message: 'Post and associated file deleted successfully' });
@@ -1316,8 +1295,7 @@ app.put('/tip/update/:id', uploadToCloudinary, async (req, res) => {
     // Successfully updated
     res.json(updatedDoc);
   
-    // Notify all clients about the deleted post using Socket.IO
-    io.emit('postUpdated', { id: req.params.id });  // Broadcast the event to all connected clients
+  
   } catch (error) {
     console.error('Error updating post:', error.message);
     res.status(500).json({ error: error.message });
