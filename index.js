@@ -191,13 +191,17 @@ const streamUpload = (fileBuffer) => {
   });
 };
 
-
-// MongoDB connection
-let dbUri = process.env.DB_URL;
-let localUri= 'mongodb://127.0.0.1:27017/Employees';
-mongoose.connect(localUri, { connectTimeoutMS: 30000 }).then(() => {
+mongoose.connect(dbUri, { 
+  connectTimeoutMS: 30000, 
+  serverSelectionTimeoutMS: 30000 // Increase this timeout as needed
+})
+.then(() => {
   console.log("Connected to the database");
+})
+.catch((err) => {
+  console.error("Failed to connect to database:", err);
 });
+
 
 // JWT Authentication Middleware
 const authenticateToken = (req, res, next) => {
