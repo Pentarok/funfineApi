@@ -414,7 +414,7 @@ app.delete('/post/:id', async (req, res) => {
 app.get('/upcoming/events',async(req,res)=>{
 updateIsPastStatus();
 try {
-  const upcomingEvents = await PostModel.find({isPast:false});
+  const upcomingEvents = await PostModel.find({isPast:false,postRender:true});
   if(upcomingEvents){
     res.json(upcomingEvents)
   }else{
