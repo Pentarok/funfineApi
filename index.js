@@ -1601,3 +1601,6 @@ app.post('/send-news', async (req, res) => {
     res.status(500).json({ message: 'Error sending news' });
   }
 });
+app.get('*', (req, res) => {
+res.send("Hello welcome to FineFun")
+});
