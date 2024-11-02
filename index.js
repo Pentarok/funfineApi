@@ -1261,7 +1261,7 @@ delete('/deleteAccount', authenticateToken, async (req, res) => {
   }
 });
 
-app.put('/profile/:userId', uploadToCloudinary, async (req, res) => {
+app.put('/profile/:userId', async (req, res) => {
   const { userId } = req.params;
   const { username } = req.body; // Assuming username is included in the request
 console.log(req.body)
