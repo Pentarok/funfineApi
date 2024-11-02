@@ -602,7 +602,7 @@ app.put('/post/update/:id', uploadToCloudinary, async (req, res) => {
 
 app.get('/posts/updated/events',async(req,res)=>{
   try {
-    const updatedPastEvents = await PostModel.find({postRender:true});
+    const updatedPastEvents = await PostModel.find({isPast:true, postRender:true});
   res.json(updatedPastEvents)
   } catch (error) {
     res.json(error)
@@ -928,13 +928,7 @@ app.put('/event/update/:id', uploadToCloudinary, async (req, res) => {
 
     res.json(updatedDoc);
 
-    //notify update 
-    const message = JSON.stringify({ type: 'postUpdated', post });
-    wss.clients.forEach(client => {
-      if (client.readyState === WebSocket.OPEN) {
-        client.send(message);
-      }
-    });
+   
   } catch (error) {
     console.error('Error updating post:', error.message);
     res.status(500).json({ error: error.message });
