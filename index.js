@@ -213,7 +213,7 @@ const streamUpload = (fileBuffer) => {
 };
 
 let dbUri = process.env.DB_URL || 'mongodb://127.0.0.1:27017/Employees';
-
+let localUri='mongodb://127.0.0.1:27017/Employees';
 mongoose.connect(dbUri, { 
   connectTimeoutMS: 30000, 
   serverSelectionTimeoutMS: 30000 
@@ -1241,6 +1241,90 @@ app.post('/send-news', async (req, res) => {
     res.status(500).json({ message: 'Error sending news' });
   }
 });
-app.get('*', (req, res) => {
-res.send("Hello welcome to FineFun")
+
+//user delete account route
+delete('/deleteAccount', authenticateToken, async (req, res) => {
+  try {
+    const userId = req.user.id;
+
+    // Delete user from the database
+    const deletedUser = await UserModel.findByIdAndDelete(userId);
+
+    if (!deletedUser) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    res.json({ message: 'Account deleted successfully' });
+  } catch (error) {
+    console.error('Error deleting account:', error);
+    res.status(500).json({ message: 'An error occurred while deleting the account' });
+  }
 });
+
+app.put('/profile/:userId', uploadToCloudinary, async (req, res) => {
+  const { userId } = req.params;
+  const { username } = req.body; // Assuming username is included in the request
+
+  try {
+    const user = await UserModel.findById(userId);
+    if (!user) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+
+    // Handle profile photo upload
+    if (req.file) {
+      // Upload the new profile photo to Cloudinary
+      const newFileUrl = await uploadToCloudinary(req.file); // Upload to Cloudinary
+
+      // If user already has a profile photo, delete the old one
+      if (user.profilePhoto) {
+        const publicId = user.profilePhoto.substring(user.profilePhoto.lastIndexOf('/') + 1, user.profilePhoto.lastIndexOf('.'));
+        const deleteResult = await deleteFileWithRetry(publicId);
+        
+        if (deleteResult.result !== 'ok') {
+          console.error('Failed to delete existing profile photo from Cloudinary');
+          return res.status(500).json({ error: 'Failed to delete existing profile photo' });
+        }
+      }
+
+      // Set the new file URL
+      user.profilePhoto = newFileUrl; // Update the user profile photo
+    }
+
+    // Update username if it has changed
+    if (username) {
+      user.username = username; // Update the username
+    }
+
+    // Save the updated user
+    const updatedUser = await user.save();
+    
+    res.status(200).json(updatedUser);
+  } catch (error) {
+    console.error('Error updating profile:', error.message);
+    res.status(500).json({ error: error.message });
+  }
+});
+
+app.get('/userprofile/:userId',async(req,res)=>{
+  try {
+   
+      const {userId}=req.params;
+      const user = await UserModel.findById(userId);
+  if(user){
+    res.json(user.username);
+  }
+  else{
+    res.json("User does not exist") 
+  } 
+}
+  catch (error) {
+    res.json(error)
+  }
+
+})
+
+app.get('*', (req, res) => {
+  res.send("Hello welcome to FineFun")
+  });
+  
