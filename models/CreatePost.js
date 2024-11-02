@@ -26,9 +26,9 @@ const PostSchema = new mongoose.Schema({
       type: Boolean,
       default: true
     },
-    pastRender: {            // Tracks if the event should be rendered as past
+    postRender: {            // Tracks if the event should be rendered
       type: Boolean,
-      default: false
+      default: true
     }
 }, {
     timestamps: true
