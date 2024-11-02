@@ -4,10 +4,15 @@ const express = require('express');
 const { htmlToText } = require('html-to-text');
 const app = express();
 
-const http = require('http');
-const server = http.createServer(app);
-const { Server } = require('socket.io');
-const io = new Server(server,{cors: {origin: "*"}});
+const io = new Server(server, {
+  cors: {
+    origin: "https://funfine.vercel.app", // Replace with your actual frontend URL
+    methods: ["GET", "POST"],
+    allowedHeaders: ["Content-Type", "Authorization"],
+    credentials: true
+  }
+});
+
 const nodemailer = require('nodemailer');
 const mongoose = require('mongoose');
 const multer = require('multer');
