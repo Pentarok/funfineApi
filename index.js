@@ -35,11 +35,23 @@ const TipsModel = require('./models/CreateTips');
 
 const FrontEndEnpoint=process.env.FRONT_END_URL;
 app.use(express.json());
-app.use(cors({
-  origin:FrontEndEnpoint,
-  methods: ["GET", "POST", "PUT", "DELETE"],
-  credentials: true
-}));
+
+
+// Configure CORS options
+const corsOptions = {
+  origin: frontEndEnpoint, // Your frontend's URL
+  methods: 'GET,POST,PUT,DELETE,OPTIONS', // Allowed HTTP methods
+  allowedHeaders: 'X-Requested-With, Content-Type, Accept, Authorization',
+  credentials: true, // Allow cookies and credentials
+};
+
+// Use CORS middleware
+app.use(cors(corsOptions));
+
+// Handle OPTIONS requests for preflight
+app.options('*', cors(corsOptions));
+
+
 /* 
 const io = new Server(server, {
   cors: {
