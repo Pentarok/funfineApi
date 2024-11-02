@@ -33,13 +33,13 @@ const NewsModel = require('./models/CreateNews');
 const EventModel = require('./models/CreateEvent.');
 const TipsModel = require('./models/CreateTips');
 
-const FrontEndEnpoint=process.env.FRONT_END_URL;
+const FrontEndEndpoint=process.env.FRONT_END_URL;
 app.use(express.json());
 
 
 // Configure CORS options
 const corsOptions = {
-  origin: frontEndEnpoint, // Your frontend's URL
+  origin: FrontEndEndpoint, // Your frontend's URL
   methods: 'GET,POST,PUT,DELETE,OPTIONS', // Allowed HTTP methods
   allowedHeaders: 'X-Requested-With, Content-Type, Accept, Authorization',
   credentials: true, // Allow cookies and credentials
