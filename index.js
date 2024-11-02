@@ -1,13 +1,13 @@
 
 require('dotenv').config();
-const http = require('http');
+//const http = require('http');
 
 const express = require('express');
 const { htmlToText } = require('html-to-text');
 const app = express();
-const { Server } = require('socket.io'); // Add this import
+/* const { Server } = require('socket.io'); // Add this import
 
-const server = http.createServer(app); // Create the server
+const server = http.createServer(app); // Create the server */
 
 const nodemailer = require('nodemailer');
 const mongoose = require('mongoose');
@@ -40,7 +40,7 @@ app.use(cors({
   methods: ["GET", "POST", "PUT", "DELETE"],
   credentials: true
 }));
-
+/* 
 const io = new Server(server, {
   cors: {
     origin: "https://funfine.vercel.app", // Replace with your actual frontend URL
@@ -57,10 +57,10 @@ io.on('connection', (socket) => {
   socket.on('disconnect', () => {
     console.log('User disconnected');
   });
-});
-server.listen(3000,()=>{
+});*/
+app.listen(3000,()=>{
   console.log('server is running on port 3000')
-})
+}) 
 // Configure Cloudinary
 cloudinary.config({
   cloud_name: process.env.CLOUD_NAME,
