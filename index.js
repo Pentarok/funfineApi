@@ -1264,10 +1264,10 @@ delete('/deleteAccount', authenticateToken, async (req, res) => {
 app.put('/profile/:userId', async (req, res) => {
   const { userId } = req.params;
   const { username } = req.body; // Assuming username is included in the request
-  console.log(username);
+
 console.log(req.body)
   try {
-    const user = await UserModel.findById(userId);
+    const user = await UserModel.findById(req.body.id);
     if (!user) {
       return res.status(404).json({ error: 'User not found' });
     }
