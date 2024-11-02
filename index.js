@@ -6,14 +6,6 @@ const express = require('express');
 const { htmlToText } = require('html-to-text');
 const app = express();
 const server = http.createServer(app); // Create the server
-const io = new Server(server, {
-  cors: {
-    origin: "https://funfine.vercel.app", // Replace with your actual frontend URL
-    methods: ["GET", "POST"],
-    allowedHeaders: ["Content-Type", "Authorization"],
-    credentials: true
-  }
-});
 
 const nodemailer = require('nodemailer');
 const mongoose = require('mongoose');
@@ -47,6 +39,14 @@ app.use(cors({
   credentials: true
 }));
 
+const io = new Server(server, {
+  cors: {
+    origin: "https://funfine.vercel.app", // Replace with your actual frontend URL
+    methods: ["GET", "POST"],
+    allowedHeaders: ["Content-Type", "Authorization"],
+    credentials: true
+  }
+});
 
 
 io.on('connection', (socket) => {
