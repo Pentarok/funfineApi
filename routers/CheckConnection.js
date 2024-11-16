@@ -1,5 +1,5 @@
 const mongoose = require("mongoose");
-const localUri =process.env.DB_URLL;
+const localUri =process.env.DB_URL;
 async function checkDbConnection(req, res) {
   try {
     if (req.method === 'OPTIONS') {
