@@ -108,7 +108,7 @@ const storage = new CloudinaryStorage({
     };
   },
 });
-
+/* 
 const upload = multer({
   storage: multer.memoryStorage()
 });
@@ -168,6 +168,54 @@ const upload = multer({
   });
 };
  
+ */
+const upload = multer({ storage: multer.memoryStorage() });
+const uploadToCloudinary = (req, res, next) => {
+  // Multer file upload
+  upload.single('file')(req, res, async (err) => {
+    if (err) {
+      console.error('Error with Multer upload:', err.message);
+      return res.status(500).json({ error: 'File upload failed', details: err.message });
+    }
+
+    // Check if file exists
+    if (!req.file) {
+      // Proceed if no file is provided (not an error)
+      console.log('No file uploaded, proceeding without Cloudinary upload.');
+      return next();
+    }
+
+    console.log('File received for Cloudinary upload:', req.file);
+
+    // Helper function for Cloudinary streaming upload
+    const streamUpload = (fileBuffer) => {
+      return new Promise((resolve, reject) => {
+        const stream = cloudinary.uploader.upload_stream(
+          { timeout: 90000 },
+          (error, result) => {
+            if (error) {
+              console.error('Cloudinary upload error:', error);
+              reject(error);
+            } else {
+              resolve(result);
+            }
+          }
+        );
+        streamifier.createReadStream(fileBuffer).pipe(stream);
+      });
+    };
+
+    // Retry logic for Cloudinary upload
+    try {
+      const result = await streamUpload(req.file.buffer);
+      req.file.location = result.secure_url; // Set the file location on req.file
+      next(); // Proceed to next middleware or route handler
+    } catch (error) {
+      console.error('Cloudinary upload failed:', error.message);
+      res.status(500).json({ error: 'Cloudinary upload failed', details: error.message });
+    }
+  });
+};
 
 const uploadToCloudinary2 = (req, res, next) => {
   upload.single('file')(req, res, async (err) => {
@@ -214,9 +262,9 @@ const streamUpload = (fileBuffer) => {
 
 let dbUri = process.env.DB_URL || 'mongodb://127.0.0.1:27017/Employees';
 let localUri='mongodb://127.0.0.1:27017/Employees';
-mongoose.connect(dbUri, { 
-  connectTimeoutMS: 30000, 
-  serverSelectionTimeoutMS: 30000 
+mongoose.connect(localUri, { 
+ /*  connectTimeoutMS: 30000,
+  serverSelectionTimeoutMS: 30000  */
 })
 .then(() => {
   console.log("Connected to the database");
@@ -1243,7 +1291,7 @@ app.post('/send-news', async (req, res) => {
 });
 
 //user delete account route
-delete('/deleteAccount', authenticateToken, async (req, res) => {
+app.delete('/deleteAccount', authenticateToken, async (req, res) => {
   try {
     const userId = req.user.id;
 
@@ -1261,21 +1309,19 @@ delete('/deleteAccount', authenticateToken, async (req, res) => {
   }
 });
 
-app.put('/profile/:userId', async (req, res) => {
+app.put('/userprofile/:userId',uploadToCloudinary, async (req, res) => {
   const { userId } = req.params;
   const { username } = req.body; // Assuming username is included in the request
 
 console.log(req.body)
   try {
-    const user = await UserModel.findById(req.body.id);
+    const user = await UserModel.findById(userId);
     if (!user) {
       return res.status(404).json({ error: 'User not found' });
     }
 
     // Handle profile photo upload
     if (req.file) {
-      // Upload the new profile photo to Cloudinary
-      const newFileUrl = await uploadToCloudinary(req.file); // Upload to Cloudinary
 
       // If user already has a profile photo, delete the old one
       if (user.profilePhoto) {
@@ -1289,7 +1335,7 @@ console.log(req.body)
       }
 
       // Set the new file URL
-      user.profilePhoto = newFileUrl; // Update the user profile photo
+      user.profilePhoto = req.file.location; // Update the user profile photo
     }
 
     // Update username if it has changed
@@ -1300,7 +1346,7 @@ console.log(req.body)
     // Save the updated user
     const updatedUser = await user.save();
     
-    res.status(200).json(updatedUser);
+    res.json(updatedUser);
   } catch (error) {
     console.error('Error updating profile:', error.message);
     res.status(500).json({ error: error.message });
