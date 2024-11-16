@@ -262,9 +262,9 @@ const streamUpload = (fileBuffer) => {
 
 let dbUri = process.env.DB_URL || 'mongodb://127.0.0.1:27017/Employees';
 let localUri='mongodb://127.0.0.1:27017/Employees';
-mongoose.connect(localUri, { 
- /*  connectTimeoutMS: 30000,
-  serverSelectionTimeoutMS: 30000  */
+mongoose.connect(dbUri, { 
+   connectTimeoutMS: 30000,
+  serverSelectionTimeoutMS: 30000  
 })
 .then(() => {
   console.log("Connected to the database");
