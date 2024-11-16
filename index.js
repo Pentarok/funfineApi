@@ -1359,7 +1359,10 @@ app.get('/userprofile/:userId',async(req,res)=>{
       const {userId}=req.params;
       const user = await UserModel.findById(userId);
   if(user){
-    res.json(user.username);
+    res.json({
+      username: user.username,
+      profilePhoto: user.profilePhoto
+  });
   }
   else{
     res.json("User does not exist") 
