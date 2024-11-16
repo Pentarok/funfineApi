@@ -1346,7 +1346,7 @@ console.log(req.body)
     // Save the updated user
     const updatedUser = await user.save();
     
-    res.json(updatedUser);
+    res.json("success");
   } catch (error) {
     console.error('Error updating profile:', error.message);
     res.status(500).json({ error: error.message });
