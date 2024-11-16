@@ -1,10 +1,14 @@
 const mongoose = require("mongoose");
-
+const localUri =process.env.DB_URLL;
 async function checkDbConnection(req, res) {
   try {
-    await mongoose.connect(process.env.DB_URL, {
-      useNewUrlParser: true,
-      useUnifiedTopology: true,
+    if (req.method === 'OPTIONS') {
+      res.status(200).end()
+      return
+    }
+  
+    await mongoose.connect(localUri, {
+      
     });
     res.status(200).json({ connected: true });
   } catch (error) {
