@@ -1094,7 +1094,7 @@ app.post('/forgot-password', async (req, res) => {
     await ResetToken.create({ token: resetToken, userId: user._id });
 
     // Define the reset URL to be sent in the email
-    const frontEndEnpoint = 'http://localhost:5173';
+    const frontEndEnpoint = process.env.FRONT_END_URL;
     const resetURL = `${frontEndEnpoint}/reset-password/${user._id}/${resetToken}`;
 
     // Email content
