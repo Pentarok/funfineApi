@@ -1024,11 +1024,13 @@ app.get('/event/:id',async (req,res)=>{
 
 app.get('/users',async (req,res)=>{
   try {
-    const users = await UserModel.find({});
+    const users = await UserModel.find({ role: 'visitor' });
+
     if (users){
-      res.json(users)
-    }else{
-      res.json("No user found")
+      res.json(users);
+    }
+    else{
+      res.json("No user found");
     }
   } catch (error) {
     res.json("Error")
